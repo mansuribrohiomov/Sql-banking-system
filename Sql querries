@@ -1,0 +1,724 @@
+create database project 
+go 
+use project
+
+-- 1. Customers
+drop table if exists customers
+create table Customers (
+    customerid int primary key,
+    fullname nvarchar(50),
+    dob date,
+    email nvarchar(100),
+    phonenumber nvarchar(50),
+    address nvarchar(100),
+    nationalid nvarchar(50), -- changed to nvarchar for non-numeric IDs
+    taxid nvarchar(50),
+    employmentstatus nvarchar(50),
+    annualincome decimal(18,2),
+    createdat datetime default sysdatetime(),
+    updatedat datetime default sysdatetime()
+);
+
+-- 2. Branches
+create table Branches (
+    branchid int primary key,
+    branchname nvarchar(50),
+    address nvarchar(50),
+    city nvarchar(50),
+    state nvarchar(50),
+    country nvarchar(50),
+    managerid int, -- fk to employees
+    contactnumber nvarchar(50)
+);
+
+-- 3. Employees
+create table Employees (
+    employeeid int primary key,
+    branchid int, -- fk to branches
+    fullname nvarchar(50),
+    position nvarchar(50),
+    department nvarchar(50),
+    salary decimal(18,2),
+    hiredate date,
+    status nvarchar(50)
+);
+drop table if exists accounts
+-- 4. Accounts
+create table Accounts (
+    accountid int primary key,
+    customerid int,
+    accounttype nvarchar(50),
+    balance decimal(18,2),
+    currency nvarchar(50),
+    status nvarchar(50),
+    branchid int,
+    createddate date
+);
+
+
+-- 5. Transactions
+create table Transactions (
+    transactionid int primary key,
+    accountid int,
+    transactiontype nvarchar(50),
+    amount decimal(18,2),
+    currency nvarchar(50),
+    date datetime,
+    status nvarchar(50),
+    referenceno nvarchar(50)
+);
+
+-- 6. CreditCards
+create table Creditcards (
+    cardid int primary key,
+    customerid int,
+    cardnumber nvarchar(50),
+    cardtype nvarchar(50),
+    cvv int,
+    expirydate date,
+    limit decimal(18,2),
+    status nvarchar(50)
+);
+
+-- 7. OnlineBankingUsers
+create table Onlinebankingusers (
+    userid int primary key,
+    customerid int,
+    username nvarchar(50),
+    passwordhash nvarchar(50),
+    lastlogin datetime
+);
+
+-- 8. Loans
+create table Loans (
+    loanid int primary key,
+    customerid int,
+    loantype nvarchar(50),
+    amount decimal(18,2),
+    interestrate decimal(5,2),
+    startdate date,
+    enddate date,
+    status nvarchar(50)
+);
+
+-- 9. InsurancePolicies
+create table Insurancepolicies (
+    policyid int primary key,
+    customerid int,
+    insurancetype nvarchar(50),
+    premiumamount decimal(18,2),
+    coverageamount decimal(18,2)
+);
+
+-- 10. Merchants
+create table Merchants (
+    merchantid int primary key,
+    merchantname nvarchar(50),
+    industry nvarchar(50),
+    location nvarchar(50),
+    customerid int
+);
+
+-- 11. LoanPayments
+create table Loanpayments (
+    paymentid int primary key,
+    loanid int,
+    amountpaid decimal(18,2),
+    paymentdate date,
+    remainingbalance decimal(18,2)
+);
+
+-- 12. CreditScores
+create table Creditscores (
+    customerid int primary key,
+    creditscore nvarchar(50),
+    updatedat datetime default sysdatetime()
+);
+
+-- 13. DebtCollection
+create table Debtcollection (
+    debtid int primary key,
+    customerid int,
+    amountdue decimal(18,2),
+    duedate date,
+    collectorassigned int
+);
+
+-- 14. KYC
+create table Kyc (
+    kycid int primary key,
+    customerid int,
+    documenttype nvarchar(50),
+    documentnumber nvarchar(50), -- changed to nvarchar for alphanumeric IDs
+    verifiedby nvarchar(50)
+);
+
+-- 15. FraudDetection
+create table Frauddetection (
+    fraudid int primary key,
+    customerid int,
+    transactionid int, -- linked to transactions table
+    risklevel nvarchar(50),
+    reporteddate date
+);
+
+-- 16. AML (Anti-Money Laundering)
+create table Aml (
+    caseid int primary key,
+    customerid int,
+    casetype nvarchar(50),
+    status nvarchar(50),
+    investigatorid int -- linked to employees table
+);
+
+-- 17. RegulatoryReports
+create table Regulatoryreports (
+    reportid int primary key,
+    reporttype nvarchar(50),
+    submissiondate date
+);
+
+-- 18. Departments
+create table Departments (
+    departmentid int primary key,
+    departmentname nvarchar(50),
+    managerid int
+);
+
+-- 19. Salaries
+create table Salaries (
+    salaryid int primary key,
+    employeeid int,
+    basesalary decimal(18,2),
+    bonus decimal(18,2),
+    deductions decimal(18,2),
+    paymentdate date
+);
+
+-- 20. EmployeeAttendance
+create table EmployeeAttendance (
+    attendanceid int primary key,
+    employeeid int,
+    checkintime datetime default sysdatetime(),
+    checkouttime datetime default sysdatetime(),
+    totalhours time
+);
+
+-- 21. Investments
+create table Investments (
+    investmentid int primary key,
+    customerid int,
+    investmenttype nvarchar(50),
+    amount decimal(18,2),
+    roi decimal(5,2),
+    maturitydate date
+);
+
+-- 22. StockTradingAccounts
+create table StockTradingAccounts (
+    accountid int primary key,
+    customerid int,
+    brokeragefirm nvarchar(50),
+    totalinvested decimal(18,2),
+    currentvalue decimal(18,2)
+);
+
+-- 23. ForeignExchange
+create table ForeignExchange (
+    fxid int primary key,
+    customerid int,
+    currencypair nvarchar(50),
+    exchangerate decimal(18,6),
+    amountexchanged decimal(18,2)
+);
+
+-- 24. Claims
+create table Claims (
+    claimid int primary key,
+    policyid int,
+    claimamount decimal(18,2),
+    status nvarchar(50),
+    fileddate date
+);
+
+-- 25. UserAccessLogs
+create table Useraccesslogs (
+    logid int primary key,
+    userid int,
+    actiontype nvarchar(50),
+    timestamp datetime
+);
+
+-- 26. CyberSecurityIncidents
+create table CyberSecurityIncidents (
+    incidentid int primary key,
+    affectedsystem nvarchar(50),
+    reporteddate datetime default sysdatetime(),
+    resolutionstatus nvarchar(50)
+);
+
+-- 27. MerchantTransactions
+create table MerchantTransactions (
+    transactionid int primary key,
+    merchantid int,
+    amount decimal(18,2),
+    paymentmethod nvarchar(50),
+    date date
+);
+
+-- 28. CreditCardTransactions (Fixed from previous missing table)
+create table CreditCardTransactions (
+    transactionid int primary key,
+    cardid int,
+    amount decimal(18,2),
+	merchant nvarchar(50),
+	currency nvarchar(50),
+	Status nvarchar(50),
+    transactiondate datetime
+);
+
+-- 29. BillPayments
+create table Billpayments (
+    paymentid int primary key,
+    customerid int,
+    billername nvarchar(50),
+    amount decimal(18,2),
+    date date,
+    status nvarchar(50)
+);
+
+-- 30. MobileBankingTransactions
+create table MobileBankingTransactions (
+    transactionid int primary key,
+    customerid int,
+    deviceid nvarchar(50),
+    appversion nvarchar(50),
+    transactiontype nvarchar(50),
+    amount decimal(18,2),
+    date date
+);
+-- Connect Employees and Branches (The Circular Part)
+alter table employees 
+add constraint fk_emp_branch foreign key (branchid) references branches(branchid);
+
+alter table branches 
+add constraint fk_branch_mgr foreign key (managerid) references employees(employeeid);
+
+-- Connect Customer Activities
+alter table accounts 
+add constraint fk_acc_cust foreign key (customerid) references customers(customerid);
+ 
+alter table accounts 
+add constraint fk_acc_branch foreign key (branchid) references branches(branchid);
+
+alter table transactions 
+add constraint fk_trans_acc foreign key (accountid) references accounts(accountid);
+
+alter table creditcards 
+add constraint fk_card_cust foreign key (customerid) references customers(customerid);
+
+alter table onlinebankingusers 
+add constraint fk_web_cust foreign key (customerid) references customers(customerid);
+
+alter table loans 
+add constraint fk_loan_cust foreign key (customerid) references customers(customerid);
+
+alter table insurancepolicies 
+add constraint fk_ins_cust foreign key (customerid) references customers(customerid);
+
+alter table merchants 
+add constraint fk_merch_cust foreign key (customerid) references customers(customerid);
+
+-- Loan and Debt Relationships
+alter table loanpayments add constraint fk_lp_loan foreign key (loanid) references loans(loanid);
+alter table debtcollection add constraint fk_debt_cust foreign key (customerid) references customers(customerid);
+alter table creditscores add constraint fk_score_cust foreign key (customerid) references customers(customerid);
+
+-- Compliance and Security
+alter table kyc add constraint fk_kyc_cust foreign key (customerid) references customers(customerid);
+alter table frauddetection add constraint fk_fraud_cust foreign key (customerid) references customers(customerid);
+alter table frauddetection add constraint fk_fraud_trans foreign key (transactionid) references transactions(transactionid);
+alter table aml add constraint fk_aml_cust foreign key (customerid) references customers(customerid);
+alter table aml add constraint fk_aml_inv foreign key (investigatorid) references employees(employeeid);
+
+-- Internal HR
+alter table departments add constraint fk_dept_mgr foreign key (managerid) references employees(employeeid);
+alter table salaries add constraint fk_sal_emp foreign key (employeeid) references employees(employeeid);
+alter table employeeattendance add constraint fk_attn_emp foreign key (employeeid) references employees(employeeid);
+
+-- Wealth and Insurance
+alter table investments add constraint fk_inv_cust foreign key (customerid) references customers(customerid);
+alter table stocktradingaccounts add constraint fk_stock_cust foreign key (customerid) references customers(customerid);
+alter table foreignexchange add constraint fk_fx_cust foreign key (customerid) references customers(customerid);
+alter table claims add constraint fk_claim_policy foreign key (policyid) references insurancepolicies(policyid);
+
+-- Digital and Logs
+alter table useraccesslogs add constraint fk_log_user foreign key (userid) references onlinebankingusers(userid);
+alter table merchanttransactions add constraint fk_mtrans_merch foreign key (merchantid) references merchants(merchantid);
+alter table creditcardtransactions add constraint fk_cctrans_card foreign key (cardid) references creditcards(cardid);
+alter table billpayments add constraint fk_bill_cust foreign key (customerid) references customers(customerid);
+alter table mobilebankingtransactions add constraint fk_mobile_cust foreign key (customerid) references customers(customerid);
+
+-----------inserting datas to tables------------------------
+--1.transactions table
+BULK INSERT transactions
+FROM 'C:\Users\User\Downloads\transactions_bulk_load.csv' 
+WITH (
+    FORMAT = 'CSV',
+    FIRSTROW = 2,        
+    FIELDTERMINATOR = ',', 
+    ROWTERMINATOR = '\n',
+    TABLOCK
+)
+
+--2.customers table 
+BULK INSERT Customers
+FROM 'C:\Users\User\Downloads\customers_bulk_load.csv' -- Update this path
+WITH (
+    FORMAT = 'CSV',
+    FIRSTROW = 2,
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '0x0a',
+    TABLOCK
+);
+
+--3. Branches table
+BULK INSERT Branches 
+FROM 'C:\Users\User\Downloads\branches.csv' 
+WITH (
+	FORMAT='CSV', 
+	FIRSTROW=2, 
+	ROWTERMINATOR='0x0a'
+);
+--4.  Employees table
+BULK INSERT Employees 
+FROM 'C:\Users\User\Downloads\employees.csv' 
+WITH (
+	FORMAT='CSV', 
+	FIRSTROW=2, 
+	ROWTERMINATOR='0x0a'
+);
+--5.  Accounts table
+BULK INSERT Accounts 
+FROM 'C:\Users\User\Downloads\accounts.csv' 
+WITH (
+	FORMAT='CSV', 
+	FIRSTROW=2, 
+	ROWTERMINATOR='0x0a'
+)
+
+--6. KYC table
+INSERT INTO Kyc (kycid, customerid, documenttype, documentnumber, verifiedby)
+SELECT TOP 100000 
+    ROW_NUMBER() OVER(ORDER BY customerid) as kycid,
+    customerid,
+    'Passport',
+    'PN-' + CAST(customerid AS VARCHAR),
+    'System_Auth'
+FROM Customers;
+
+--7.  Loans table
+INSERT INTO Loans (loanid, customerid, loantype, amount, interestrate, startdate, enddate, status)
+SELECT TOP 100000
+    ROW_NUMBER() OVER(ORDER BY customerid) as loanid,
+    customerid,
+    'Personal',
+    5000.00,
+    5.5,
+    '2024-01-01',
+    '2029-01-01',
+    'Active'
+FROM Customers;
+
+-- adding additional loans to existing customers
+INSERT INTO Loans (loanid, customerid, loantype, amount, interestrate, startdate, enddate, status)
+SELECT TOP 50000
+    (SELECT MAX(loanid) FROM Loans) + ROW_NUMBER() OVER(ORDER BY customerid) as loanid,
+    customerid, 
+    'Auto Loan' as loantype,
+    15000.00,
+    7.2,
+    '2024-05-01',
+    '2027-05-01',
+    'Active'
+FROM Customers;
+
+--8  Credit Cards table
+INSERT INTO Creditcards (cardid, customerid, cardnumber, cardtype, cvv, expirydate, limit, status)
+SELECT TOP 100000
+    ROW_NUMBER() OVER(ORDER BY customerid) as cardid,
+    customerid,
+    '4111' + CAST(customerid AS VARCHAR),
+    'Visa Gold',
+    123,
+    '2028-12-31',
+    10000.00,
+    'Active'
+FROM Customers;
+
+--9. BillPayments table
+INSERT INTO BillPayments (paymentid, customerid, billername, amount, date, status)
+SELECT TOP 100000 
+    ROW_NUMBER() OVER(ORDER BY customerid) + 1000, 
+    customerid, 
+    CASE WHEN customerid % 3 = 0 THEN 'Electric Co' WHEN customerid % 3 = 1 THEN 'Water Dept' ELSE 'Telecom' END,
+    RAND(CHECKSUM(NEWID())) * 200 + 50, 
+    GETDATE() - (customerid % 30), 
+    'Completed'
+FROM Customers;
+
+--10. OnlineBankingUsers table
+ALTER TABLE Useraccesslogs NOCHECK CONSTRAINT fk_log_user;
+
+DELETE FROM Onlinebankingusers;
+
+DECLARE @Counter INT = 1;
+DECLARE @MaxRows INT = 100000;
+
+WHILE @Counter <= @MaxRows
+BEGIN
+    INSERT INTO Onlinebankingusers (userid, customerid, username, passwordhash, lastlogin)
+    VALUES (
+        @Counter,                      -- Using counter as UserID
+        @Counter,                      -- Mapping 1:1 to CustomerID for simplicity
+        'user_' + CAST(@Counter AS VARCHAR(10)), 
+        -- Creates a shorter, safe 32-character hash
+        LOWER(REPLACE(CAST(NEWID() AS VARCHAR(36)), '-', '')), 
+        DATEADD(MINUTE, -@Counter, GETDATE())
+    );
+
+    SET @Counter = @Counter + 1;
+END
+
+-- 4. Re-enable constraints
+ALTER TABLE Useraccesslogs WITH CHECK CHECK CONSTRAINT fk_log_user;
+
+PRINT 'Loop completed: 100,000 banking users generated.';
+select*from onlinebankingusers
+--11. LoanPayments table
+INSERT INTO LoanPayments (paymentid, loanid, amountpaid, paymentdate, remainingbalance)
+SELECT TOP 100000 
+    ROW_NUMBER() OVER(ORDER BY loanid), 
+    loanid, 
+    500.00, 
+    GETDATE() - 5, 
+    4500.00
+FROM Loans;
+
+--12. CreditScores table
+INSERT INTO CreditScores (customerid, creditscore, updatedat)
+SELECT customerid, 300 + (customerid % 550), GETDATE()
+FROM Customers;
+
+--13. Salaries table
+INSERT INTO Salaries (salaryid, employeeid, basesalary, bonus, deductions, paymentdate)
+SELECT 
+    employeeid, 
+    employeeid, 
+    salary, 
+    salary * 0.1, 
+    salary * 0.05, 
+    '2024-04-30'
+FROM Employees;
+--14. EmployeeAttendance table
+INSERT INTO EmployeeAttendance (attendanceid, employeeid, checkintime, checkouttime)
+SELECT TOP 100000 
+    n.n, 
+    (n.n % (SELECT COUNT(*) FROM Employees)) + 1, 
+    DATEADD(HOUR, 9, CAST(CAST(GETDATE() AS DATE) AS DATETIME)), 
+    DATEADD(HOUR, 17, CAST(CAST(GETDATE() AS DATE) AS DATETIME))
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n 
+FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+select*from employeeattendance
+--15 InsurancePolicies table (Linked to Customers)
+INSERT INTO InsurancePolicies (policyid, customerid, insurancetype, premiumamount, coverageamount)
+SELECT TOP 100000 
+    ROW_NUMBER() OVER(ORDER BY customerid), 
+    customerid, 
+    'Life', 50.00, 100000.00
+FROM Customers;
+
+--16. Claims table (Linked to Policies)
+INSERT INTO Claims (claimid, policyid, claimamount, status, fileddate)
+SELECT TOP 100000 
+    ROW_NUMBER() OVER(ORDER BY policyid), 
+    policyid, 
+    5000.00, 'Pending', GETDATE()
+FROM InsurancePolicies;
+
+-- 17. Investments
+INSERT INTO Investments (investmentid, customerid, investmenttype, amount, roi, maturitydate)
+SELECT TOP 100000 
+    customerid, customerid, 'Mutual Fund', 15000.00, 8.5, '2030-01-01'
+FROM Customers;
+
+-- 18. StockTradingAccounts
+INSERT INTO StockTradingAccounts (accountid, customerid, brokeragefirm, totalinvested, currentvalue)
+SELECT TOP 100000 
+    customerid, customerid, 'Fidelity', 10000.00, 11200.00
+FROM Customers;
+
+-- 19. ForeignExchange
+INSERT INTO ForeignExchange (fxid, customerid, currencypair, exchangerate, amountexchanged)
+SELECT TOP 100000 
+    customerid, customerid, 'GBP/USD', 1.25, 500.00
+FROM Customers;
+
+-- 20. Merchants
+INSERT INTO Merchants (merchantid, merchantname, industry, location, customerid)
+SELECT TOP 100000 
+    customerid, 'Store_' + CAST(customerid AS VARCHAR), 'Retail', 'Online', customerid
+FROM Customers;
+
+-- 21. MerchantTransactions
+INSERT INTO MerchantTransactions (transactionid, merchantid, amount, paymentmethod, date)
+SELECT TOP 100000 
+    n.n, (n.n % 100000) + 1, 85.20, 'E-Wallet', GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 22. MobileBankingTransactions
+INSERT INTO MobileBankingTransactions (transactionid, customerid, deviceid, appversion, transactiontype, amount, date)
+SELECT TOP 100000 
+    n.n, (n.n % 600000) + 1, 'Device_ID_' + CAST(n.n AS VARCHAR), 'v5.2.1', 'Mobile_Transfer', 25.00, GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 23. CreditCardTransactions
+INSERT INTO CreditCardTransactions (transactionid, cardid, amount, transactiondate)
+SELECT TOP 100000 
+    n.n, (n.n % 100000) + 1, 45.00, GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 24. UserAccessLogs
+INSERT INTO UserAccessLogs (logid, userid, actiontype, timestamp)
+SELECT TOP 100000 
+    n.n, (n.n % 100000) + 1, 'MFA_AUTH_SUCCESS', GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 25. CyberSecurityIncidents
+INSERT INTO CyberSecurityIncidents (incidentid, affectedsystem, reporteddate, resolutionstatus)
+SELECT TOP 100000 
+    n.n, 'Database_Node_' + CAST((n.n % 5) AS VARCHAR), GETDATE(), 'Monitored'
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n 
+FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 26. FraudDetection
+INSERT INTO FraudDetection (fraudid, customerid, transactionid, risklevel, reporteddate)
+SELECT TOP 100000 
+    n.n, (n.n % 600000) + 1, n.n, 'Medium', GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n 
+FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 27. AML (Anti-Money Laundering)
+INSERT INTO AML (caseid, customerid, casetype, status, investigatorid)
+SELECT TOP 100000 
+    customerid, customerid, 'Large Cash Deposit', 'Open', 1
+FROM Customers WHERE customerid <= 100000;
+
+-- 28. RegulatoryReports
+INSERT INTO RegulatoryReports (reportid, reporttype, submissiondate)
+SELECT TOP 100000 
+    n.n, 'SAR_REPORT_001', GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n 
+FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+-- 29. Departments
+-- Since we only have a few branches/employees, we can manually fill this or use a small select
+INSERT INTO Departments (departmentid, departmentname, managerid)
+SELECT TOP 100 
+    branchid, 'Branch_Ops_' + CAST(branchid AS VARCHAR), managerid 
+FROM Branches;
+
+-- 30. DebtCollection
+INSERT INTO DebtCollection (debtid, customerid, amountdue, duedate, collectorassigned)
+SELECT TOP 100000 
+    n.n, (n.n % 600000) + 1, 1200.00, GETDATE() + 30, GETDATE()
+FROM (SELECT TOP 100000 ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) as n 
+FROM sys.all_columns a CROSS JOIN sys.all_columns b) n;
+
+--1--TOP 3 CUSTOMERS WITH THE HIGHEST TOTAL BALANCE ACROSS ALL ACCOUNTS
+select top 3 c.customerid,c.fullname,sum(a.balance) Total from customers c
+join accounts a
+on c.customerid=a.customerid
+group by c.customerid,c.fullname
+order by Total desc
+--2 ---	Customers Who Have More Than One Active Loan
+select *from Customers
+select *from loans
+
+select c.customerid,c.fullname,count(l.loanid) loancount from Customers c
+join loans l
+	on c.customerid=l.customerid
+where l.status = 'Active'
+group by c.customerid,c.fullname
+having count(l.loanid)>1
+order by loancount desc
+
+
+--3.Transactions That Were Flagged as Fraudulent   
+select * from transactions t
+join frauddetection f
+   on f.transactionid=t.transactionid
+
+--4	Total Loan Amount Issued Per Branch
+select *from branches
+select *from loans
+select *from Accounts
+
+select b.branchid,b.branchname,sum(l.amount) totalamount from branches b
+join Accounts a 
+	on b.branchid=a.branchid
+join loans l
+	on l.customerid=a.customerid
+group by b.branchid,b.branchname
+order by totalamount desc
+
+--5. �	Customers who made multiple large transactions
+--(above $10,000) within a short time frame (less than 1 hour apart)
+
+with CTE as (
+    select 
+        c.CustomerID, 
+        c.FullName, 
+        t.TransactionID, 
+        t.Amount, 
+        t.Date 
+    from Customers c
+    join Accounts a on c.CustomerID = a.CustomerID
+    join Transactions t on a.AccountID = t.AccountID
+    where t.Amount > 10000
+)
+select distinct 
+    c1.CustomerID, 
+    c1.FullName 
+from CTE c1
+join CTE c2 on c1.CustomerID = c2.CustomerID 
+    and c1.TransactionID < c2.TransactionID 
+where DATEDIFF(SECOND, c1.Date, c2.Date) <= 3600 
+  and DATEDIFF(SECOND, c1.Date, c2.Date) >= -3600;
+--6.Customers who have made transactions from different countries within 
+--10 minutes, a common red flag for fraud.
+
+;with CTE1 as(
+    select 
+        c.CustomerID, 
+        c.FullName, 
+        t.TransactionID, 
+        t.Date, 
+        b.Country 
+    from Customers c
+join Accounts a on c.CustomerID = a.CustomerID
+join Transactions t on a.AccountID = t.AccountID
+join Branches b on a.BranchID = b.BranchID
+)
+select distinct 
+    c1.CustomerID, 
+    c1.FullName, 
+    c1.Country as Country1, 
+    c2.Country as Country2, 
+    c1.Date as Time1, 
+    c2.Date as Time2 
+from CTE1 c1
+join CTE1 c2 on c1.CustomerID = c2.CustomerID
+    and c1.TransactionID < c2.TransactionID 
+where c1.Country <> c2.Country 
+    and ABS(DATEDIFF(minute, c1.Date, c2.Date)) <= 10;
